@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -169,5 +170,18 @@ func getFile(respWriter http.ResponseWriter, req *http.Request) {
 }
 
 func invalidateCache(respWriter http.ResponseWriter, req *http.Request) {
-
+	os.RemoveAll(controllers.DOWNLOADS_FILE_DIR)
+	os.Mkdir(controllers.DOWNLOADS_FILE_DIR, fs.ModeDevice)
+	os.Chmod(controllers.DOWNLOADS_FILE_DIR, os.ModePerm)
+	db.InitializeDB()
+	respWriter.Header().Add("Content-Type", "application/json")
+	respWriter.WriteHeader(http.StatusOK)
+	type HTTPResponse struct {
+		Message string `json:"message"`
+	}
+	respBody := HTTPResponse {
+		Message: "OK",
+	}
+	bs, _ := json.Marshal(respBody)
+	respWriter.Write(bs)
 }

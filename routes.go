@@ -23,13 +23,3 @@ var routes = []route{
 	NewRoute("GET", "/get-file", getFile),
 	NewRoute("GET", "/invalidate-cache", invalidateCache),
 }
-
-func extractURI(uri string) string {
-	for i, c := range uri {
-		if c == '?' {
-			runes := []rune(uri)
-			return string(runes[0:i])
-		}
-	}
-	return uri
-}
